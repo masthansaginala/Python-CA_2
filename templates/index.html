@@ -56,10 +56,21 @@
                 <input type="password" id="register-password" placeholder="Password" required>
                 <button type="submit">Register</button>
             </form>
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="text" id="login-username" placeholder="Username" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+        <div id="admin-dashboard" style="display: none;">
+            <h2>Manage Hotels</h2>
         </div>
     </div>
     <script>
         const registerForm = document.getElementById('register-form');
+        const loginForm = document.getElementById('login-form');
+
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('register-username').value;
@@ -74,6 +85,19 @@
             alert(data.message);
             registerForm.reset();  // Clear the form
         });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+        });
+
+
     </script>
 </body>
 </html>

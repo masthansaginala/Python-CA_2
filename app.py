@@ -51,6 +51,15 @@ def register():
     db.session.commit()
     return jsonify({'message': 'User registered successfully'})
 
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    user = User.query.filter_by(username=data['username']).first()
+    if user and user.check_password(data['password']):
+        token = user.get_token()
+        return jsonify({'token': token, 'role': user.role})
+    return jsonify({'message': 'Invalid credentials'}), 401
+
 
 if __name__ == '__main__':
     app.run(debug=True)
