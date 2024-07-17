@@ -75,6 +75,19 @@ def admin_dashboard():
         return redirect(url_for('home'))
     return render_template('admin_dashboard.html')
 
+@app.route('/add-hotel', methods=['GET', 'POST'])
+def add_hotel():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        data = request.form
+        hotel = Hotel(name=data['name'], description=data['description'], price=data['price'], admin_id=session['user_id'])
+        db.session.add(hotel)
+        db.session.commit()
+        return jsonify({'message': 'Hotel added successfully'})
+
+    return render_template('add_hotel.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
