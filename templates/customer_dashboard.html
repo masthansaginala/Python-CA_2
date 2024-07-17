@@ -76,18 +76,34 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Load available hotels
-            const hotelResponse = await fetch('/hotels');
-            const hotels = await hotelResponse.json();
+            const response = await fetch('/hotels');
+            const hotels = await response.json();
             const hotelList = document.getElementById('hotel-list');
             hotelList.innerHTML = hotels.map(hotel => `
                 <div class="hotel">
                     <h3>${hotel.name}</h3>
                     <p>${hotel.description}</p>
                     <p>Price: $${hotel.price}</p>
+                     <button onclick="bookHotel(${hotel.id})">Book Hotel</button>
                 </div>
             `).join('');
+        });
+        async function bookHotel(hotelId) {
+            const response = await fetch('/book-hotel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ hotel_id: hotelId })
+            });
+            if (response.ok) {
+                alert('Hotel booked successfully');
+                window.location.reload();
+            } else {
+                alert('Error booking hotel');
+            }
         }
+        
     </script>
 </body>
 </html>
