@@ -55,5 +55,22 @@
             <button type="submit">Update Hotel</button>
         </form>
     </div>
+    <script>
+        document.getElementById('edit-hotel-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'PUT',
+                body: formData
+            });
+            if (response.ok) {
+                alert('Hotel updated successfully');
+                window.location.href = '/view-hotels';
+            } else {
+                alert('Error updating hotel');
+            }
+        });
+    </script>
 </body>
 </html>
