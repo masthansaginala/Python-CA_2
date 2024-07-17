@@ -76,9 +76,8 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Load available hotels
-            const hotelResponse = await fetch('/hotels');
-            const hotels = await hotelResponse.json();
+            const response = await fetch('/hotels');
+            const hotels = await response.json();
             const hotelList = document.getElementById('hotel-list');
             hotelList.innerHTML = hotels.map(hotel => `
                 <div class="hotel">
@@ -88,7 +87,21 @@
                     <button onclick="bookHotel(${hotel.id})">Book Hotel</button>
                 </div>
             `).join('');
-        }
+
+
+        });
+        document.addEventListener('DOMContentLoaded', async () => {
+            const response = await fetch('/bookings');
+            const bookings = await response.json();
+            const bookingList = document.getElementById('booking-list');
+            bookingList.innerHTML = bookings.map(booking => `
+                <div class="booking">
+                    <h3>${booking.hotel_name}</h3>
+                    <p>${booking.hotel_description}</p>
+                    <p>Price: $${booking.hotel_price}</p>
+                </div>
+            `).join('');
+        });
         async function bookHotel(hotelId) {
             const response = await fetch('/book-hotel', {
                 method: 'POST',
