@@ -89,5 +89,24 @@ def add_hotel():
 
     return render_template('add_hotel.html')
 
+@app.route('/view-hotels')
+def view_hotels():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('home'))
+    return render_template('view_hotels.html')
+
+@app.route('/hotels', methods=['GET'])
+def get_hotels():
+    if 'user_id' not in session:
+        return jsonify({'message': 'Permission denied'}), 403
+
+    if session.get('role') == 'admin':
+        hotels = Hotel.query.filter_by(admin_id=session['user_id']).all()
+    else:
+        hotels = Hotel.query.all()
+    return jsonify([{'id': hotel.id, 'name': hotel.name, 'description': hotel.description, 'price': hotel.price} for hotel in hotels])
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
