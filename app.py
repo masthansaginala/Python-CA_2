@@ -134,6 +134,10 @@ def delete_hotel(hotel_id):
     db.session.commit()
     return jsonify({'message': 'Hotel deleted successfully'})
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
