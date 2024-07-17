@@ -1,10 +1,13 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token
+from datetime import datetime
 import os
 from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -12,21 +15,19 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 
 # Extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
-jwt = JWTManager(app)
 
 # Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     role = db.Column(db.String(50), nullable=False, default='customer')
-    email = db.Column(db.String(150), unique=True, nullable=False)
 
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -34,8 +35,12 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
 
-    def get_token(self):
-        return create_access_token(identity=self.id)
+class Hotel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    admin_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 @app.route('/')
@@ -44,21 +49,31 @@ def home():
 
 @app.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    user = User(username=data['username'], role='customer', email=data['email'])
+    data = request.form
+    user = User(username=data['username'], email=data['email'], role='customer')
     user.set_password(data['password'])
     db.session.add(user)
     db.session.commit()
-    return jsonify({'message': 'User registered successfully'})
+    return redirect(url_for('index'))
 
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
+    data = request.form
     user = User.query.filter_by(username=data['username']).first()
     if user and user.check_password(data['password']):
-        token = user.get_token()
-        return jsonify({'token': token, 'role': user.role})
+        session['user_id'] = user.id
+        session['role'] = user.role
+        if user.role == 'admin':
+            return redirect(url_for('admin_dashboard'))
+        else:
+            return redirect(url_for('customer_dashboard'))
     return jsonify({'message': 'Invalid credentials'}), 401
+
+@app.route('/admin-dashboard')
+def admin_dashboard():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('home'))
+    return render_template('admin_dashboard.html')
 
 
 if __name__ == '__main__':
