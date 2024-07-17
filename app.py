@@ -42,6 +42,13 @@ class Hotel(db.Model):
     price = db.Column(db.Float, nullable=False)
     admin_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    hotel_id = db.Column(db.Integer, db.ForeignKey('hotel.id'), nullable=False)
+    date_booked = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
 
 @app.route('/')
 def home():
