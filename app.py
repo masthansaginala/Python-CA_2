@@ -106,6 +106,22 @@ def get_hotels():
         hotels = Hotel.query.all()
     return jsonify([{'id': hotel.id, 'name': hotel.name, 'description': hotel.description, 'price': hotel.price} for hotel in hotels])
 
+@app.route('/edit-hotel/<int:hotel_id>', methods=['GET', 'POST'])
+def edit_hotel(hotel_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('home'))
+
+    hotel = Hotel.query.get_or_404(hotel_id)
+
+    if request.method == 'POST':
+        data = request.form
+        hotel.name = data['name']
+        hotel.description = data['description']
+        hotel.price = data['price']
+        db.session.commit()
+        return jsonify({'message': 'Hotel updated successfully'})
+
+    return render_template('edit_hotel.html', hotel=hotel)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Hotel</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Hotel</h1>
+        <form id="edit-hotel-form" action="/edit-hotel/{{ hotel.id }}" method="POST">
+            <input type="text" id="hotel-name" name="name" value="{{ hotel.name }}" placeholder="Hotel Name" required>
+            <input type="text" id="hotel-description" name="description" value="{{ hotel.description }}" placeholder="Hotel Description" required>
+            <input type="number" id="hotel-price" name="price" value="{{ hotel.price }}" placeholder="Hotel Price" required>
+            <button type="submit">Update Hotel</button>
+        </form>
+    </div>
+</body>
+</html>
