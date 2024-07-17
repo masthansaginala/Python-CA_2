@@ -186,5 +186,18 @@ def get_bookings():
 
     return jsonify(bookings_data)
 
+@app.route('/delete-booking/<int:booking_id>', methods=['DELETE'])
+def delete_booking(booking_id):
+    if 'user_id' not in session or session.get('role') != 'customer':
+        return jsonify({'message': 'Permission denied'}), 403
+
+    booking = Booking.query.get_or_404(booking_id)
+    if booking.user_id != session['user_id']:
+        return jsonify({'message': 'Permission denied'}), 403
+
+    db.session.delete(booking)
+    db.session.commit()
+    return jsonify({'message': 'Booking deleted successfully'})
+    
 if __name__ == '__main__':
     app.run(debug=True)

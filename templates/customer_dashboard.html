@@ -99,6 +99,7 @@
                     <h3>${booking.hotel_name}</h3>
                     <p>${booking.hotel_description}</p>
                     <p>Price: $${booking.hotel_price}</p>
+                    <button onclick="deleteBooking(${booking.id})">Delete Booking</button>
                 </div>
             `).join('');
         });
@@ -116,6 +117,16 @@
             } else {
                 alert('Error booking hotel');
             }
+        }
+        async function deleteBooking(bookingId) {
+            const response = await fetch(/delete-booking/${bookingId}, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                alert('Booking deleted successfully');
+                window.location.reload();
+            } else {
+                alert('Error deleting booking');}
         }
     </script>
 </body>
