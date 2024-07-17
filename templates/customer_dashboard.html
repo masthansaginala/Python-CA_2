@@ -76,8 +76,9 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const response = await fetch('/hotels');
-            const hotels = await response.json();
+            // Load available hotels
+            const hotelResponse = await fetch('/hotels');
+            const hotels = await hotelResponse.json();
             const hotelList = document.getElementById('hotel-list');
             hotelList.innerHTML = hotels.map(hotel => `
                 <div class="hotel">
@@ -88,11 +89,9 @@
                 </div>
             `).join('');
 
-
-        });
-        document.addEventListener('DOMContentLoaded', async () => {
-            const response = await fetch('/bookings');
-            const bookings = await response.json();
+            // Load user's bookings
+            const bookingResponse = await fetch('/bookings');
+            const bookings = await bookingResponse.json();
             const bookingList = document.getElementById('booking-list');
             bookingList.innerHTML = bookings.map(booking => `
                 <div class="booking">
@@ -103,6 +102,7 @@
                 </div>
             `).join('');
         });
+
         async function bookHotel(hotelId) {
             const response = await fetch('/book-hotel', {
                 method: 'POST',
@@ -118,15 +118,17 @@
                 alert('Error booking hotel');
             }
         }
+
         async function deleteBooking(bookingId) {
-            const response = await fetch(/delete-booking/${bookingId}, {
+            const response = await fetch(`/delete-booking/${bookingId}`, {
                 method: 'DELETE'
             });
             if (response.ok) {
                 alert('Booking deleted successfully');
                 window.location.reload();
             } else {
-                alert('Error deleting booking');}
+                alert('Error deleting booking');
+            }
         }
     </script>
 </body>
