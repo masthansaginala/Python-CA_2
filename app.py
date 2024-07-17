@@ -54,7 +54,7 @@ def register():
     user.set_password(data['password'])
     db.session.add(user)
     db.session.commit()
-    return redirect(url_for('index'))
+    return render_template('index.html')
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -74,6 +74,12 @@ def admin_dashboard():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('home'))
     return render_template('admin_dashboard.html')
+
+@app.route('/customer-dashboard')
+def customer_dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+    return render_template('customer_dashboard.html')
 
 @app.route('/add-hotel', methods=['GET', 'POST'])
 def add_hotel():
