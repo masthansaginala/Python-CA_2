@@ -152,6 +152,21 @@ def logout():
     session.clear()
     return redirect(url_for('home'))
 
+@app.route('/book-hotel', methods=['POST'])
+def book_hotel():
+    if 'user_id' not in session or session.get('role') != 'customer':
+        return jsonify({'message': 'Permission denied'}), 403
+
+    data = request.get_json()
+    hotel_id = data.get('hotel_id')
+    user_id = session['user_id']
+
+    booking = Booking(user_id=user_id, hotel_id=hotel_id)
+    db.session.add(booking)
+    db.session.commit()
+
+    return jsonify({'message': 'Hotel booked successfully'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
