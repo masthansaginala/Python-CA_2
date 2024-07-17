@@ -123,6 +123,18 @@ def edit_hotel(hotel_id):
 
     return render_template('edit_hotel.html', hotel=hotel)
 
+@app.route('/delete-hotel/<int:hotel_id>', methods=['DELETE'])
+def delete_hotel(hotel_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('home'))
+
+    hotel = Hotel.query.get_or_404(hotel_id)
+
+    db.session.delete(hotel)
+    db.session.commit()
+    return jsonify({'message': 'Hotel deleted successfully'})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
