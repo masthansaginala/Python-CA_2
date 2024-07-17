@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Hotel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Hotel</h1>
+        <form id="add-hotel-form" action="/add-hotel" method="POST" enctype="multipart/form-data">
+            <input type="text" id="hotel-name" name="name" placeholder="Hotel Name" required>
+            <input type="text" id="hotel-description" name="description" placeholder="Hotel Description" required>
+            <input type="number" id="hotel-price" name="price" placeholder="Hotel Price" required>
+            <button type="submit">Add Hotel</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('add-hotel-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                alert('Hotel added successfully');
+                window.location.href = '/admin-dashboard';
+            } else {
+                alert('Error adding hotel');
+            }
+        });
+    </script>
+</body>
+</html>
