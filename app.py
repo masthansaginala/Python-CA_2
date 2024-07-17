@@ -167,6 +167,24 @@ def book_hotel():
 
     return jsonify({'message': 'Hotel booked successfully'})
 
+@app.route('/bookings', methods=['GET'])
+def get_bookings():
+    if 'user_id' not in session or session.get('role') != 'customer':
+        return jsonify({'message': 'Permission denied'}), 403
+
+    user_id = session['user_id']
+    bookings = Booking.query.filter_by(user_id=user_id).all()
+    bookings_data = []
+    for booking in bookings:
+        hotel = Hotel.query.get(booking.hotel_id)
+        bookings_data.append({
+            'id': booking.id,
+            'hotel_name': hotel.name,
+            'hotel_description': hotel.description,
+            'hotel_price': hotel.price
+        })
+
+    return jsonify(bookings_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
