@@ -53,6 +53,7 @@ class Booking(db.Model):
 @app.route('/')
 def home():
     print("hi sowji")
+    print("hi masthan")
     return render_template('index.html')
 
 @app.route('/register', methods=['POST'])
