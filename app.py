@@ -19,7 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-bcrypt = Bcrypt(app)
+
 
 # Models
 class User(db.Model):
